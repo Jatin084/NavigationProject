@@ -1,16 +1,16 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { ItemData } from "./HooksParent";
 
 const GraphComponent = () => {
     console.log("Graph Component")
     const { item } = useContext(ItemData)
-    const barsList = [{id:1, color: 'orange', height: 100 }, {id:2, color: 'lightblue', height: 120 }, {id:3, color: 'green', height: 60 }, { id:4,color: 'orange', height: 90 },
-    {id:5, color: 'orange', height: 70 }, {id:6, color: 'lightblue', height: 80 }, { id:7,color: 'green', height: 100 }, {id:8, color: 'orange', height: 75 },
-    { id:9,color: 'orange', height: 90 }, { id:10,color: 'lightblue', height: 70 }, { id:11,color: 'green', height: 95 }, {id:12, color: 'orange', height: 80 }];
+    const barsList = [{ id: 1, color: 'orange', height: 100 }, { id: 2, color: 'lightblue', height: 120 }, { id: 3, color: 'green', height: 60 }, { id: 4, color: 'orange', height: 90 },
+    { id: 5, color: 'orange', height: 70 }, { id: 6, color: 'lightblue', height: 80 }, { id: 7, color: 'green', height: 100 }, { id: 8, color: 'orange', height: 75 },
+    { id: 9, color: 'orange', height: 90 }, { id: 10, color: 'lightblue', height: 70 }, { id: 11, color: 'green', height: 95 }, { id: 12, color: 'orange', height: 80 }];
 
     return (
-        
+
         <View style={styles.viewContainer}>
             <View style={styles.graphContainer}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -30,22 +30,31 @@ const GraphComponent = () => {
 
                     </View>
                 </View>
-                <View style={{marginTop:30,flex:1, flexDirection: "row",alignItems:'baseline',justifyContent:'center' }}>
+                <View style={{ marginTop: 30, flex: 1, flexDirection: "row", alignItems: 'baseline', justifyContent: 'center' }}>
 
                     {
 
                         barsList.map(item => (
                             <View style={{
-                                marginHorizontal:6,
+                                marginHorizontal: 6,
                                 height: item.height,
                                 width: 15,
                                 backgroundColor: item.color,
-                                borderTopLeftRadius:7,
-                                borderTopRightRadius:7
+                                borderTopLeftRadius: 7,
+                                borderTopRightRadius: 7
                             }} />
                         ))}
                 </View>
+                <View style={{ marginTop: 10, flex: 1, flexDirection: "row", alignItems: 'center', justifyContent: 'space-between',marginHorizontal:30 }}>
+                <Text style={{ fontSize: 10, color: 'black' }}>All</Text>
+                <Text style={{ fontSize: 10, color: 'black' }}>4h</Text>
+                <Text style={{ fontSize: 10, color: 'black' }}>16h</Text>
+                <Text style={{ fontSize: 10, color: 'black' }}>1d</Text>
+                <Text style={{ fontSize: 10, color: 'black' }}>2d</Text>
+                <Text style={{ fontSize: 10, color: 'black' }}>4d</Text>
 
+                    
+                </View>
             </View>
 
         </View>

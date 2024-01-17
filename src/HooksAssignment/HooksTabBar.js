@@ -3,6 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import React, {  useContext, useEffect, useState } from "react";
 import { TextInput, View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Alert } from "react-native";
 import { ItemData } from "./HooksParent";
+import { useDebounceHook } from "./CustomHooks";
 const marketDataList = [{
     name: "BTC",
     id: "1",
@@ -200,17 +201,22 @@ const Market = () => {
 
     }, [])
 
-    const searchFunction = (text) => {
+    
+
+    useDebounceHook(700,()=>{
         const updatedData = arrayholder.filter((item) => {
             const item_data = item.name;
             console.log("item_data", item_data)
-            const text_data = text;
-            console.log("text_data", text_data)
-            if (item_data.includes(text))
+            if (item_data.includes(searchedValue))
+              for(let i =1;i<50000;i++){}
+
                 return item;
 
         });
         setSearched(updatedData);
+    },[searchedValue])
+
+    const searchFunction = (text) => {
         setSearchedValue(text);
 
     };
@@ -227,7 +233,7 @@ const Market = () => {
         <View style={styles.imputType}>
             <TextInput style={{ marginStart: 5 }}
                 placeholder="Search your choice"
-                value={searchedValue}
+                // value={searchedValue}
                 onChangeText={(text) => searchFunction(text)}
             />
         </View>
@@ -286,21 +292,22 @@ const Recent = () => {
         setSearched(recentDataList)
 
     }, [])
-
-    const searchFunction = (text) => {
+    useDebounceHook(700,()=>{
         const updatedData = arrayholder.filter((item) => {
             const item_data = item.name;
             console.log("item_data", item_data)
-            const text_data = text;
-            console.log("text_data", text_data)
-            if (item_data.includes(text))
+            if (item_data.includes(searchedValue))
                 return item;
 
         });
         setSearched(updatedData);
+    },[searchedValue])
+
+    const searchFunction = (text) => {
         setSearchedValue(text);
 
     };
+    
 
 
     const handleItemPress = (item) => {
@@ -334,10 +341,11 @@ const Recent = () => {
             }}
             keyExtractor={(item) => { item.id }}
             renderItem={({ item }) => {
+                console.log("Market Itmes");
                 return (
                     <>
                         <TouchableOpacity onPress={() => handleItemPress(item)}>
-
+                      
                             <View style={styles.listItem}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                     <Image style={styles.imageStyle}
