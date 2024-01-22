@@ -3,7 +3,6 @@ import React, { useEffect } from "react";
 const useDebounceHook = (time, callback, depArray) => {
     useEffect(() => {
         timeout = setTimeout(() => {
-            console.log('ddiiiii')
             callback()
         }, time)
 

@@ -2,7 +2,6 @@ import React, { memo } from "react";
 import { StyleSheet, View, Image, Text } from "react-native";
 
 const HooksHeader = () => {
-    console.log("Header Component")
 
     return (
        <View>
@@ -20,6 +19,7 @@ const HooksHeader = () => {
                 <Text style={{color:'blue', fontSize:20 }}>+</Text>
 
             </View>
+            
             <View style={[styles.roundshape, { backgroundColor: 'white', borderColor: 'lightgrey', borderWidth: 1, marginLeft:10}]}>
                 <Image style={styles.imageStyle}
                     resizeMode="cover"

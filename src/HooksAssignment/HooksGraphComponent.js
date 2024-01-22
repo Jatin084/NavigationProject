@@ -3,7 +3,6 @@ import { View, Text, StyleSheet } from "react-native";
 import { ItemData } from "./HooksParent";
 
 const GraphComponent = () => {
-    console.log("Graph Component")
     const { item } = useContext(ItemData)
     const barsList = [{ id: 1, color: 'orange', height: 100 }, { id: 2, color: 'lightblue', height: 120 }, { id: 3, color: 'green', height: 60 }, { id: 4, color: 'orange', height: 90 },
     { id: 5, color: 'orange', height: 70 }, { id: 6, color: 'lightblue', height: 80 }, { id: 7, color: 'green', height: 100 }, { id: 8, color: 'orange', height: 75 },

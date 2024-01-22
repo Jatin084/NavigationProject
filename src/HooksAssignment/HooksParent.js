@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, memo } from "react";
 import {View} from "react-native";
 import HooksHeader from "./HooksHeader";
 import HooksTabBar from "./HooksTabBar";
@@ -8,7 +8,6 @@ export const ItemData = createContext();
 const HooksParent=()=>{
     const [item,setItem] = useState({});
 
-    console.log("Parent Component")
     return(
         <>
         <ItemData.Provider value={{item,setItem}}>
@@ -24,4 +23,4 @@ const HooksParent=()=>{
    
 }
 
-export default HooksParent;
+export default memo(HooksParent);

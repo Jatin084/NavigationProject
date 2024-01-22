@@ -1,9 +1,11 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { NavigationContainer } from "@react-navigation/native";
-import React, {  useContext, useEffect, useState } from "react";
+import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { TextInput, View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Alert } from "react-native";
 import { ItemData } from "./HooksParent";
 import { useDebounceHook } from "./CustomHooks";
+import RenderItem from "./FlatListItem";
+import SearchComponent from "./SearchComponent";
 const marketDataList = [{
     name: "BTC",
     id: "1",
@@ -167,8 +169,6 @@ const recentDataList = [{
 const Tab = createMaterialTopTabNavigator();
 
 const HooksTabBar = () => {
-    console.log("TabBar Component")
-
 
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -192,51 +192,73 @@ const HooksTabBar = () => {
 
 
 const Market = () => {
+    const [query, setQuery] = useState("")
     const { setItem } = useContext(ItemData)
-    const [searchedData, setSearched] = useState([]);
-    const [searchedValue, setSearchedValue] = useState("");
+    const [listData, setListData] = useState([]);
+    // const [searchedValue, setSearchedValue] = useState("");
+    const [timeStamp, setTimeStamp] = useState()
     const arrayholder = marketDataList;
+   
     useEffect(() => {
-        setSearched(marketDataList)
-
+        setListData(marketDataList)
     }, [])
 
-    
-
-    useDebounceHook(700,()=>{
-        const updatedData = arrayholder.filter((item) => {
-            const item_data = item.name;
-            console.log("item_data", item_data)
-            if (item_data.includes(searchedValue))
-              for(let i =1;i<50000;i++){}
-
-                return item;
-
-        });
-        setSearched(updatedData);
-    },[searchedValue])
-
-    const searchFunction = (text) => {
-        setSearchedValue(text);
-
-    };
 
 
-    const handleItemPress = (item) => {
-        item.marketCap = Math.floor(Date.now() / 1000)
-        setItem(item)
-    };
+    // useDebounceHook(700,()=>{
+    //     const updatedData = arrayholder.filter((item) => {
+    //         const item_data = item.name;
+    //         if (item_data.includes(searchedValue))
+    //             return item;
+
+    //     });
+    //     setSearched(updatedData);
+    // },[searchedValue])
+
+    // const searchFunction = (text) => {
+    //     if (!text) {
+    //         console.log("Push All:", text)
+    //         setListData(arrayholder)
+    //     } else {
+    //         const updatedList = arrayholder.filter((item) => {
+    //             if (item.name.toLowerCase().includes(text.toLowerCase()))
+    //                 return item;
+    //             });
+
+    //         setListData(updatedList)
+    //     }
+    //     console.log("QUERY:", text)
+    //     console.log("UpdatedList:", listData)
+
+
+    // };
+
+    useEffect(()=>{
+        if (!query) {
+            setListData(arrayholder)
+        } else {
+            const updatedList = arrayholder.filter((item) => {
+                if (item.name.toLowerCase().includes(query.toLowerCase()))
+                    return item;
+                });
+
+            setListData(updatedList)
+        }
+    },[query])
+
+
+    const handleItemPress = useCallback((index)=>{
+        const time = Date.now()
+        listData[index] = { ...listData[index], marketCap: time }
+        setItem(listData[index])
+        setTimeStamp(time)
+
+    },[listData])
 
 
 
     return (<View style={{ backgroundColor: 'white' }}>
-        <View style={styles.imputType}>
-            <TextInput style={{ marginStart: 5 }}
-                placeholder="Search your choice"
-                // value={searchedValue}
-                onChangeText={(text) => searchFunction(text)}
-            />
-        </View>
+        <SearchComponent searching={(query) => setQuery(query)} />
         <View style={styles.listItem}>
             <Text style={[styles.textStyle, { marginLeft: 5 }]}>Market</Text>
             <Text style={styles.textStyle}>Price</Text>
@@ -248,82 +270,88 @@ const Market = () => {
             style={styles.viewItemSeperator}
         />
         <FlatList
-            data={searchedData}
+            data={listData}
             ItemSeparatorComponent={() => {
                 return (<View
                     style={styles.viewItemSeperator}
                 />)
             }}
-            keyExtractor={(item) => { item.id }}
-            renderItem={({ item }) => {
-                return (
-                    <>
-                        <TouchableOpacity onPress={() => handleItemPress(item)} >
-
-                            <View style={styles.listItem}>
-                                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                    <Image style={styles.imageStyle}
-                                        resizeMode="cover"
-                                        source={require('../HooksAssignment/assets/kcal.png')}
-                                    />
-                                    <Text style={[styles.textStyle, { marginLeft: 5 }]}>{item.name}</Text>
-                                </View>
-                                <Text style={styles.textStyle}>$ {item.price}</Text>
-                                <Text style={styles.textStyle}>{item.change}</Text>
-                                <Text style={styles.textStyle}>{item.marketCap}</Text>
-
-                            </View>
-                        </TouchableOpacity>
-                    </>
-
-                )
-
-            }}
+            extraData={timeStamp}
+            renderItem={({ item, index }) => <RenderItem item={item} handleItemPress={handleItemPress} index={index} />}
         />
     </View>
     );
 }
 const Recent = () => {
+    const [query, setQuery] = useState("")
     const { setItem } = useContext(ItemData)
-    const [searchedData, setSearched] = useState([]);
-    const [searchedValue, setSearchedValue] = useState("");
+    const [listData, setListData] = useState([]);
+    // const [searchedValue, setSearchedValue] = useState("");
+    const [timeStamp, setTimeStamp] = useState()
     const arrayholder = marketDataList;
+   
     useEffect(() => {
-        setSearched(recentDataList)
-
+        setListData(marketDataList)
     }, [])
-    useDebounceHook(700,()=>{
-        const updatedData = arrayholder.filter((item) => {
-            const item_data = item.name;
-            console.log("item_data", item_data)
-            if (item_data.includes(searchedValue))
-                return item;
-
-        });
-        setSearched(updatedData);
-    },[searchedValue])
-
-    const searchFunction = (text) => {
-        setSearchedValue(text);
-
-    };
-    
 
 
-    const handleItemPress = (item) => {
-        item.marketCap = Math.floor(Date.now() / 1000)
-        setItem(item)
-    };
+
+    // useDebounceHook(700,()=>{
+    //     const updatedData = arrayholder.filter((item) => {
+    //         const item_data = item.name;
+    //         if (item_data.includes(searchedValue))
+    //             return item;
+
+    //     });
+    //     setSearched(updatedData);
+    // },[searchedValue])
+
+    // const searchFunction = (text) => {
+    //     if (!text) {
+    //         console.log("Push All:", text)
+    //         setListData(arrayholder)
+    //     } else {
+    //         const updatedList = arrayholder.filter((item) => {
+    //             if (item.name.toLowerCase().includes(text.toLowerCase()))
+    //                 return item;
+    //             });
+
+    //         setListData(updatedList)
+    //     }
+    //     console.log("QUERY:", text)
+    //     console.log("UpdatedList:", listData)
+
+
+    // };
+
+    useEffect(()=>{
+        if (!query) {
+            setListData(arrayholder)
+        } else {
+            const updatedList = arrayholder.filter((item) => {
+                if (item.name.toLowerCase().includes(query.toLowerCase()))
+                    return item;
+                });
+
+            setListData(updatedList)
+        }
+    },[query])
+
+
+    const handleItemPress = useCallback((index)=>{
+        const time = Date.now()
+        listData[index] = { ...listData[index], marketCap: time }
+        setItem(listData[index])
+        setTimeStamp(time)
+
+    },[listData])
+
+
+
     return (<View style={{ backgroundColor: 'white' }}>
-         <View style={styles.imputType}>
-            <TextInput style={{ marginStart: 5 }}
-                placeholder="Search your choice"
-                value={searchedValue}
-                onChangeText={(text) => searchFunction(text)}
-            />
-        </View>
+        <SearchComponent searching={(query) => setQuery(query)} />
         <View style={styles.listItem}>
-            <Text style={[styles.textStyle, { marginLeft: 5 }]}>Recent</Text>
+            <Text style={[styles.textStyle, { marginLeft: 5 }]}>Market</Text>
             <Text style={styles.textStyle}>Price</Text>
             <Text style={styles.textStyle}>Change</Text>
             <Text style={styles.textStyle}>Market cap</Text>
@@ -333,37 +361,14 @@ const Recent = () => {
             style={styles.viewItemSeperator}
         />
         <FlatList
-            data={searchedData}
+            data={listData}
             ItemSeparatorComponent={() => {
                 return (<View
                     style={styles.viewItemSeperator}
                 />)
             }}
-            keyExtractor={(item) => { item.id }}
-            renderItem={({ item }) => {
-                console.log("Market Itmes");
-                return (
-                    <>
-                        <TouchableOpacity onPress={() => handleItemPress(item)}>
-                      
-                            <View style={styles.listItem}>
-                                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                    <Image style={styles.imageStyle}
-                                        resizeMode="cover"
-                                        source={require('../HooksAssignment/assets/kcal.png')}
-                                    />
-                                    <Text style={[styles.textStyle, { marginLeft: 5 }]}>{item.name}</Text>
-                                </View>
-                                <Text style={styles.textStyle}>$ {item.price}</Text>
-                                <Text style={styles.textStyle}>{item.change}</Text>
-                                <Text style={styles.textStyle}>{item.marketCap}</Text>
-
-                            </View>
-                        </TouchableOpacity>
-                    </>
-                )
-
-            }}
+            extraData={timeStamp}
+            renderItem={({ item, index }) => <RenderItem item={item} handleItemPress={handleItemPress} index={index} />}
         />
     </View>
     );
@@ -402,5 +407,5 @@ const styles = StyleSheet.create({
     }
 });
 
-export default HooksTabBar;
+export default memo(HooksTabBar);
 
